@@ -28,6 +28,11 @@ jobs:
           git clone --depth=1 https://github.com/bhazheng/kernel_lge_sm8250.git kernel
           cd kernel
 
+      - name: Clone KernelSU
+        run: |
+          cd kernel/drivers
+          git clone --depth=1 https://github.com/tiann/KernelSU.git kernelsu
+
       - name: Compile Kernel (Full LLVM)
         run: |
           cd kernel
