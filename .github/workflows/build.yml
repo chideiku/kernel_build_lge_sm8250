@@ -1,0 +1,54 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Kernel Build (LLVM)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential bc flex bison libssl-dev ccache \
+            clang lld llvm python3-pip git
+
+      - name: Clone Kernel Source
+        run: |
+          git clone --depth=1 https://github.com/bhazheng/kernel_lge_sm8250.git kernel
+          cd kernel
+
+      - name: Compile Kernel (Full LLVM)
+        run: |
+          cd kernel
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export PATH="/usr/bin:$PATH"
+
+          # Set LLVM toolchain
+          export CC=clang
+          export LD=ld.lld
+          export AR=llvm-ar
+          export NM=llvm-nm
+          export STRIP=llvm-strip
+          export OBJCOPY=llvm-objcopy
+          export OBJDUMP=llvm-objdump
+          export READELF=llvm-readelf
+          export HOSTCC=clang
+          export HOSTCXX=clang++
+          export HOSTAR=llvm-ar
+          export HOSTLD=ld.lld
+
+          # Gunakan defconfig yang ada di vendor
+          make vendor/timelm-perf_defconfig
+          make -j$(nproc) CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip READELF=llvm-readelf
