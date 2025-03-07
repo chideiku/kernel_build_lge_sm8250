@@ -26,18 +26,8 @@ jobs:
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 https://github.com/bhazheng/kernel_lge_sm8250.git kernel
+          git clone --depth=1 https://github.com/ErickG233/kernel_lge_sm8250.git kernel
           cd kernel
-
-      - name: Remove KernelSU from Kconfig
-        run: |
-          cd kernel
-          sed -i '/drivers\/kernelsu\/Kconfig/d' drivers/Kconfig
-
-      - name: Disable KernelSU in Defconfig
-        run: |
-          cd kernel
-          sed -i '/CONFIG_KSU/d' arch/arm64/configs/vendor/timelm-perf_defconfig
 
       - name: Compile Kernel (Clang + GCC)
         run: |
