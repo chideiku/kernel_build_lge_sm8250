@@ -21,8 +21,12 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential bc flex bison libssl-dev ccache \
-            clang lld llvm python2 python3 python3-pip git libncurses-dev gawk \
+            clang lld llvm python3 python3-pip git libncurses-dev gawk \
             gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
+
+      - name: Set Python 2 Alias
+        run: |
+          sudo ln -sf /usr/bin/python3 /usr/bin/python2
             
       - name: Clone Kernel Source
         run: |
