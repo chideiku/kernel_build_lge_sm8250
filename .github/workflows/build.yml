@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential bc flex bison libssl-dev ccache \
-            clang lld llvm python3-pip git
+            clang lld llvm python3-pip git libncurses-dev gawk
 
       - name: Clone Kernel Source
         run: |
@@ -38,27 +38,23 @@ jobs:
           cd kernel
           sed -i '/CONFIG_KSU/d' arch/arm64/configs/vendor/timelm-perf_defconfig
 
-      - name: Compile Kernel (Full LLVM)
+      - name: Compile Kernel (Clang + GCC)
         run: |
           cd kernel
           export ARCH=arm64
           export SUBARCH=arm64
           export PATH="/usr/bin:$PATH"
 
-          # Set LLVM toolchain
+          # Pakai Clang untuk compile utama
           export CC=clang
-          export LD=ld.lld
-          export AR=llvm-ar
-          export NM=llvm-nm
-          export STRIP=llvm-strip
-          export OBJCOPY=llvm-objcopy
-          export OBJDUMP=llvm-objdump
-          export READELF=llvm-readelf
-          export HOSTCC=clang
-          export HOSTCXX=clang++
-          export HOSTAR=llvm-ar
-          export HOSTLD=ld.lld
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
+
+          # Tambah flag debugging
+          export MAKEFLAGS="V=1"
 
           # Gunakan defconfig yang ada di vendor
+          make mrproper
+          make clean
           make vendor/timelm-perf_defconfig
-          make -j$(nproc) CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip READELF=llvm-readelf
+          make LLVM=1 LLVM_IAS=1 -j$(nproc)
