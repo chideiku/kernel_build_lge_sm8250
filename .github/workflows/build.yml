@@ -21,22 +21,17 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y build-essential bc flex bison libssl-dev ccache \
-            clang lld llvm python3 python3-pip git libncurses-dev gawk \
+            clang lld llvm python3-pip git libncurses-dev gawk \
             gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
-
-      - name: Set Python 2 Alias
-        run: |
-          sudo ln -sf /usr/bin/python3 /usr/bin/python2
 
       - name: Clone Kernel Source
         run: |
-          git clone --depth=1 https://github.com/ErickG233/kernel_lge_sm8250.git kernel
+          git clone --depth=1 https://github.com/LGEQCOMSM8250/android_kernel_lge_sm8250.git kernel
 
-      - name: Fix Python 2 Syntax in gcc-wrapper.py
+      - name: Debug Available Defconfigs
         run: |
-          cd kernel/scripts
-          sed -i 's/print "/print("/g' gcc-wrapper.py
-          sed -i 's/")/")/g' gcc-wrapper.py
+          cd kernel/arch/arm64/configs
+          ls vendor/
 
       - name: Compile Kernel (Clang + GCC)
         run: |
@@ -52,5 +47,5 @@ jobs:
           export AR=aarch64-linux-gnu-ar
 
           # Gunakan defconfig yang ada di vendor
-          make vendor/timelm-perf_defconfig
+          make LLVM=1 vendor/timelm-perf_defconfig
           make LLVM=1 LLVM_IAS=1 -j$(nproc) CROSS_COMPILE=aarch64-linux-gnu-
