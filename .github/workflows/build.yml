@@ -54,4 +54,4 @@ jobs:
 
           # Gunakan defconfig yang ada di vendor
           make vendor/timelm-perf_defconfig
-          make LLVM=1 LLVM_IAS=1 -j$(nproc)
+          make LLVM=1 LLVM_IAS=1 -j$(nproc) CROSS_COMPILE=aarch64-linux-gnu-
