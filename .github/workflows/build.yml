@@ -28,6 +28,11 @@ jobs:
           git clone --depth=1 https://github.com/bhazheng/kernel_lge_sm8250.git kernel
           cd kernel
 
+      - name: Remove KernelSU from Kconfig
+        run: |
+          cd kernel
+          sed -i '/drivers\/kernelsu\/Kconfig/d' drivers/Kconfig
+
       - name: Disable KernelSU in Defconfig
         run: |
           cd kernel
