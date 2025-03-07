@@ -27,6 +27,12 @@ jobs:
       - name: Set Python 2 Alias
         run: |
           sudo ln -sf /usr/bin/python3 /usr/bin/python2
+
+      - name: Fix Python 2 Syntax in gcc-wrapper.py
+        run: |
+          cd kernel/scripts
+          sed -i 's/print "/print("/g' gcc-wrapper.py
+          sed -i 's/")/")/g' gcc-wrapper.py
             
       - name: Clone Kernel Source
         run: |
